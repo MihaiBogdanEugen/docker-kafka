@@ -31,7 +31,7 @@ RUN echo "===> Updating debian ....." && \
     gpg --batch --verify "${KAFKA_DIST}.tgz.asc" "${KAFKA_DIST}.tgz" && \
     echo "===> Unpacking kafka ..."  && \
     tar -xvf "${KAFKA_DIST}.tgz" -C /opt && \
-    rm -r "$GNUPGHOME" "${KAFKA_DIST}.tgz" "${KAFKA_DIST}.tgz.asc" && \
+    rm -rf "${GNUPGHOME}" "${KAFKA_DIST}.tgz" "${KAFKA_DIST}.tgz.asc" && \
     echo "===> Shortcut created for install folder ..."  && \
     ln -s /opt/$KAFKA_DIST /opt/kafka && \
     ln -s /opt/kafka/bin/* /usr/bin && \
