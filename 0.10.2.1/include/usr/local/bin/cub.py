@@ -9,9 +9,7 @@ The script supports following commands:
 
 1. kafka-ready : Ensures a Kafka cluster is ready to accept client requests.
 2. zk-ready: Ensures that a Zookeeper ensemble is ready to accept client requests.
-3. sr-ready: Ensures that Schema Registry is ready to accept client requests.
-4. kr-ready: Ensures that Kafka REST Proxy is ready to accept client requests.
-5. listeners: Derives the listeners property from advertised.listeners.
+3. listeners: Derives the listeners property from advertised.listeners.
 
 These commands log any output to stderr and returns with exitcode 0 if successful, 1 otherwise.
 

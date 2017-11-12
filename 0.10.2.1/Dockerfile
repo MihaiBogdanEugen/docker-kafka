@@ -14,8 +14,8 @@ EXPOSE 9092
 
 RUN echo "===> Updating debian ....." && \
     apt-get -qq update && \
-    echo "===> Installing curl wget netcat python...." && \
-    apt-get install -y apt-transport-https curl wget netcat python=${PYTHON_VERSION} && \
+    echo "===> Installing gnupg2 curl wget netcat python...." && \
+    apt-get install -y apt-transport-https gnupg2 curl wget netcat python=${PYTHON_VERSION} && \
     echo "===> Installing python packages ..."  && \
     curl -fSL "https://bootstrap.pypa.io/get-pip.py" | python && \
     pip install --no-cache-dir --upgrade pip==${PYTHON_PIP_VERSION} && \
@@ -23,14 +23,14 @@ RUN echo "===> Updating debian ....." && \
     echo "===> Downloading kafka ..."  && \
     wget -q "http://www.apache.org/dist/kafka/${KAFKA_VERSION}/${KAFKA_DIST}.tgz" && \
     echo "===> Verifying kafka ..."  && \
-    echo "${KAFKA_SHA256_SUM}" "${KAFKA_DIST}.tgzz" | sha256sum -c - && \    
+    echo "${KAFKA_SHA256_SUM}" "${KAFKA_DIST}.tgz" | sha256sum -c - && \    
     wget -q "http://www.apache.org/dist/kafka/${KAFKA_VERSION}/${KAFKA_DIST}.tgz.asc" && \
     wget -q "http://kafka.apache.org/KEYS" && \
     export GNUPGHOME="$(mktemp -d)" && \
     gpg --import KEYS && \
     gpg --batch --verify "${KAFKA_DIST}.tgz.asc" "${KAFKA_DIST}.tgz" && \
     echo "===> Unpacking kafka ..."  && \
-    tar -xvf "${KAFKA_DIST}.tgzz" -C /opt && \
+    tar -xvf "${KAFKA_DIST}.tgz" -C /opt && \
     rm -r "$GNUPGHOME" "${KAFKA_DIST}.tgz" "${KAFKA_DIST}.tgz.asc" && \
     echo "===> Shortcut created for install folder ..."  && \
     ln -s /opt/$KAFKA_DIST /opt/kafka && \
@@ -39,7 +39,7 @@ RUN echo "===> Updating debian ....." && \
     rm -rf  "/opt/kafka/bin/windows" \
             "/opt/kafka/site-docs/"*.cmd \
             "/opt/kafka/Notice"  && \
-    apt-get autoremove -y wget && \
+    apt-get autoremove -y gnupg2 wget && \
     rm -rf /var/lib/apt/lists/* && \
     mkdir -p $KAFKA_DATA_DIR /opt/kafka/secrets
 
