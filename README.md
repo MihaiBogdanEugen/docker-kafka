@@ -15,7 +15,7 @@
 - Oracle JDK 8u152 addded, without MissionControl, VisualVM, JavaFX, ReadMe files, source archives, etc.
 - Oracle Java Cryptography Extension added
 - Python 2.7.9-1 & pip 9.0.1 added
-- SHA 256 sum checks for all downloads
+- Verified downloads
 - JAVA\_HOME environment variable set up
 - Utility scripts added for generating the configuration files
 
@@ -34,32 +34,18 @@ docker run -d \
     -e KAFKA_ZOOKEEPER_CONNECT=localhost:2181 \
     -e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092 \
     -e KAFKA_BROKER_ID=1 \
-    -e KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1 \
     mbe1224/kafka
 ```
 
-### Environment variables: ###
+### Configuration: ###
 
-One can use the following environment variables for configuring the ZooKeeper node:
+One can configure a Kafka instance using environment variables. All [Configuration Options] \([Broker Configs] and [Topic-level Configs]\) from the official documentation can be used as long as the following naming rules are followed:
+- upper caps
+- "." replaced with "\_"
+- snake case instead of pascal case
+- "ZOOKEEPER\_" prefix
 
-| # | Name | Default value | Meaning | Comments |
-|---|---|---|---|---|
-| 1 | KAFKA\_ADVERTISED\_LISTENERS | - | Advertised listeners is how it gives out a host name that can be reached by the client | - |
-| 2 | KAFKA\_BROKER\_ID | - | Node identifier | Required in Kafka replicated scenarios |
-| 3 | KAFKA\_CUB\_ZK\_TIMEOUT | 40 | Time in secondss to wait for the Zookeeper to be available | - |
-| 4 | KAFKA\_JMX\_OPTS | - | JMX options used for monitoring | KAFKA\_OPTS should contain 'com.sun.management.jmxremote.rmi.port' property |
-| 5 | KAFKA\_LOG4J\_LOGGERS | {'kafka': 'INFO','kafka.network.RequestChannel$': 'WARN','kafka.producer.async.DefaultEventHandler': 'DEBUG','kafka.request.logger': 'WARN','kafka.controller': 'TRACE','kafka.log.LogCleaner': 'INFO','state.change.logger': 'TRACE','kafka.authorizer.logger': 'WARN'} | - | - |
-| 6 | KAFKA\_LOG4J\_ROOT\_LOGLEVEL | INFO | - | - |
-| 7 | KAFKA\_OFFSETS\_TOPIC\_REPLICATION\_FACTOR | 3 | The replication factor for the offsets topic - set higher to ensure availability | Internal topic creation will fail until the cluster size meets this replication factor requirement |
-| 8 | KAFKA\_SSL\_KEY\_CREDENTIALS | - | SSL key credentials | Required if SSL is enabled |
-| 9 | KAFKA\_SSL\_KEYSTORE\_CREDENTIALS | - | SSL keystore credentials | Required if SSL is enabled |
-| 10 | KAFKA\_SSL\_KEYSTORE\_FILENAME | - | SSL keystore filename | Required if SSL is enabled |
-| 11 | KAFKA\_SSL\_TRUSTSTORE\_CREDENTIALS | - | SSL trustore credentials | Required if SSL is enabled |
-| 12 | KAFKA\_SSL\_TRUSTSTORE\_FILENAME | - | SSL trustore filename | Required if SSL is enabled |
-| 13 | KAFKA\_TOOLS\_LOG4J\_LOGLEVEL | WARN | - | - |
-| 14 | KAFKA\_ZOOKEEPER\_CONNECT | - | Tells Kafka how to get in touch with ZooKeeper | - |
-
-Moreover, one can use any of the properties specified in the [Configuration Options] \([Broker Configs] and [Topic-level Configs]\) by replacing "." with "\_" and appending "KAFKA\_" before the property name. For example, instead of ```offsets.topic.replication.factor``` use ```KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR```.
+For example, in order to limit the number of concurrent connections a single client may make to a single member of the ZooKeeper ensemble, one has to modifiy the "offsets.topic.replication.factor" property, which is translated in the "KAFKA\_OFFSETS\_TOPIC\_REPLICATION\_FACTOR" environment variable.
 
 ### Dual licensed under: ###
 
