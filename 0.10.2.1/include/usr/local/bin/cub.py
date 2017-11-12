@@ -72,7 +72,7 @@ def check_zookeeper_ready(connect_string, timeout):
     """
     cmd_template = """
              java {jvm_opts} \
-                 -cp /etc/confluent/docker/docker-utils.jar  \
+                 -cp /opt/kafka/tools/docker-utils.jar \
                  io.confluent.admin.utils.cli.ZookeeperReadyCommand \
                  {connect_string} \
                  {timeout_in_ms}"""
@@ -121,7 +121,7 @@ def check_kafka_ready(expected_brokers, timeout, config, bootstrap_broker_list=N
     """
     cmd_template = """
              java {jvm_opts} \
-                 -cp /etc/confluent/docker/docker-utils.jar  \
+                 -cp /opt/kafka/tools/docker-utils.jar \
                  io.confluent.admin.utils.cli.KafkaReadyCommand \
                  {expected_brokers} \
                  {timeout_in_ms}"""
@@ -148,69 +148,6 @@ def check_kafka_ready(expected_brokers, timeout, config, bootstrap_broker_list=N
     if exit_code == 0:
         return True
     else:
-        return False
-
-
-def check_schema_registry_ready(host, port, service_timeout):
-    """Waits for Schema registry to be ready.
-
-    Args:
-        host: Hostname where schema registry is hosted.
-        port: Schema registry port.
-        timeout: Time in secs to wait for the service to be available.
-
-    Returns:
-        False, if the timeout expires and Schema registry is unreachable, True otherwise.
-
-    """
-
-    # Check if you can connect to the endpoint
-    status = wait_for_service(host, port, service_timeout)
-
-    if status:
-        # Check if service is responding as expected to basic request
-        url = "http://%s:%s/config" % (host, port)
-        r = requests.get(url)
-        # The call should always return the compatibilityLevel
-        if r.status_code // 100 == 2 and 'compatibilityLevel' in str(r.text):
-            return True
-        else:
-            print("Unexpected response with code: %s and content: %s" % (str(r.status_code), str(r.text)), file=sys.stderr)
-            return False
-    else:
-        print("%s cannot be reached on port %s." % (str(host), str(port)), file=sys.stderr)
-        return False
-
-
-def check_kafka_rest_ready(host, port, service_timeout):
-    """Waits for Kafka REST Proxy to be ready.
-
-    Args:
-        host: Hostname where Kafka REST Proxy is hosted.
-        port: Kafka REST Proxy port.
-        timeout: Time in secs to wait for the service to be available.
-
-    Returns:
-        False, if the timeout expires and Kafka REST Proxy is unreachable, True otherwise.
-
-    """
-    # Check if you can connect to the endpoint
-    status = wait_for_service(host, port, service_timeout)
-
-    if status:
-
-        # Check if service is responding as expected to basic request
-        # Try to get topic list
-        # NOTE: this will only test ZK <> REST Proxy interaction
-        url = "http://%s:%s/topics" % (host, port)
-        r = requests.get(url)
-        if r.status_code // 100 == 2:
-            return True
-        else:
-            print("Unexpected response with code: %s and content: %s" % (str(r.status_code), str(r.text)), file=sys.stderr)
-            return False
-    else:
-        print("%s cannot be reached on port %s." % (str(host), str(port)), file=sys.stderr)
         return False
 
 
@@ -254,16 +191,6 @@ if __name__ == '__main__':
     kafka.add_argument('-c', '--config', help='Path to config properties file (required when security is enabled).')
     kafka.add_argument('-s', '--security-protocol', help='Security protocol to use when multiple listeners are enabled.')
 
-    sr = actions.add_parser('sr-ready', description='Check if Schema Registry is ready.')
-    sr.add_argument('host', help='Hostname for Schema Registry.')
-    sr.add_argument('port', help='Port for Schema Registry.')
-    sr.add_argument('timeout', help='Time in secs to wait for service to be ready.', type=int)
-
-    kr = actions.add_parser('kr-ready', description='Check if Kafka REST Proxy is ready.')
-    kr.add_argument('host', help='Hostname for REST Proxy.')
-    kr.add_argument('port', help='Port for REST Proxy.')
-    kr.add_argument('timeout', help='Time in secs to wait for service to be ready.', type=int)
-
     config = actions.add_parser('listeners', description='Get listeners value from advertised.listeners. Replaces host to 0.0.0.0')
     config.add_argument('advertised_listeners', help='advertised.listeners string.')
 
@@ -279,10 +206,6 @@ if __name__ == '__main__':
         success = check_zookeeper_ready(args.connect_string, int(args.timeout))
     elif args.action == "kafka-ready":
         success = check_kafka_ready(int(args.expected_brokers), int(args.timeout), args.config, args.bootstrap_broker_list, args.zookeeper_connect, args.security_protocol)
-    elif args.action == "sr-ready":
-        success = check_schema_registry_ready(args.host, args.port, int(args.timeout))
-    elif args.action == "kr-ready":
-        success = check_kafka_rest_ready(args.host, args.port, int(args.timeout))
     elif args.action == "listeners":
         listeners = get_kafka_listeners(args.advertised_listeners)
         if listeners:

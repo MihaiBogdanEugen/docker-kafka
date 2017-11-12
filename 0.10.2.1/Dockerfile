@@ -41,10 +41,10 @@ RUN echo "===> Updating debian ....." && \
             "/opt/kafka/Notice"  && \
     apt-get autoremove -y wget && \
     rm -rf /var/lib/apt/lists/* && \
-    mkdir -p $KAFKA_DATA_DIR
+    mkdir -p $KAFKA_DATA_DIR /opt/kafka/secrets
 
 COPY "/include/opt/kafka/tools/templates/"*.template /opt/kafka/tools/templates/
-COPY "/include/opt/kafka/tools/"*.sh /opt/kafka/tools/
+COPY "/include/opt/kafka/tools/"*.* /opt/kafka/tools/
 COPY /include/usr/local/bin/cub.py /usr/local/bin/cub
 COPY /include/usr/local/bin/dub.py /usr/local/bin/dub
 

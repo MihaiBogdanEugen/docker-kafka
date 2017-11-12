@@ -17,8 +17,6 @@ then
   KAFKA_LISTENERS=$(cub listeners "$KAFKA_ADVERTISED_LISTENERS")
 fi
 
-dub path /etc/kafka/ writable
-
 if [[ -z "${KAFKA_LOG_DIRS-}" ]]
 then
   export KAFKA_LOG_DIRS
@@ -56,27 +54,27 @@ then
   echo "SSL is enabled."
 
   dub ensure KAFKA_SSL_KEYSTORE_FILENAME
-  export KAFKA_SSL_KEYSTORE_LOCATION="/etc/kafka/secrets/$KAFKA_SSL_KEYSTORE_FILENAME"
+  export KAFKA_SSL_KEYSTORE_LOCATION="/opt/kafka/secrets/$KAFKA_SSL_KEYSTORE_FILENAME"
   dub path "$KAFKA_SSL_KEYSTORE_LOCATION" exists
 
   dub ensure KAFKA_SSL_KEY_CREDENTIALS
-  KAFKA_SSL_KEY_CREDENTIALS_LOCATION="/etc/kafka/secrets/$KAFKA_SSL_KEY_CREDENTIALS"
+  KAFKA_SSL_KEY_CREDENTIALS_LOCATION="/opt/kafka/secrets/$KAFKA_SSL_KEY_CREDENTIALS"
   dub path "$KAFKA_SSL_KEY_CREDENTIALS_LOCATION" exists
   export KAFKA_SSL_KEY_PASSWORD
   KAFKA_SSL_KEY_PASSWORD=$(cat "$KAFKA_SSL_KEY_CREDENTIALS_LOCATION")
 
   dub ensure KAFKA_SSL_KEYSTORE_CREDENTIALS
-  KAFKA_SSL_KEYSTORE_CREDENTIALS_LOCATION="/etc/kafka/secrets/$KAFKA_SSL_KEYSTORE_CREDENTIALS"
+  KAFKA_SSL_KEYSTORE_CREDENTIALS_LOCATION="/opt/kafka/secrets/$KAFKA_SSL_KEYSTORE_CREDENTIALS"
   dub path "$KAFKA_SSL_KEYSTORE_CREDENTIALS_LOCATION" exists
   export KAFKA_SSL_KEYSTORE_PASSWORD
   KAFKA_SSL_KEYSTORE_PASSWORD=$(cat "$KAFKA_SSL_KEYSTORE_CREDENTIALS_LOCATION")
 
   dub ensure KAFKA_SSL_TRUSTSTORE_FILENAME
-  export KAFKA_SSL_TRUSTSTORE_LOCATION="/etc/kafka/secrets/$KAFKA_SSL_TRUSTSTORE_FILENAME"
+  export KAFKA_SSL_TRUSTSTORE_LOCATION="/opt/kafka/secrets/$KAFKA_SSL_TRUSTSTORE_FILENAME"
   dub path "$KAFKA_SSL_TRUSTSTORE_LOCATION" exists
 
   dub ensure KAFKA_SSL_TRUSTSTORE_CREDENTIALS
-  KAFKA_SSL_TRUSTSTORE_CREDENTIALS_LOCATION="/etc/kafka/secrets/$KAFKA_SSL_TRUSTSTORE_CREDENTIALS"
+  KAFKA_SSL_TRUSTSTORE_CREDENTIALS_LOCATION="/opt/kafka/secrets/$KAFKA_SSL_TRUSTSTORE_CREDENTIALS"
   dub path "$KAFKA_SSL_TRUSTSTORE_CREDENTIALS_LOCATION" exists
   export KAFKA_SSL_TRUSTSTORE_PASSWORD
   KAFKA_SSL_TRUSTSTORE_PASSWORD=$(cat "$KAFKA_SSL_TRUSTSTORE_CREDENTIALS_LOCATION")
@@ -104,6 +102,18 @@ then
   fi
 fi
 
-dub template "/etc/confluent/docker/${COMPONENT}.properties.template" "/etc/${COMPONENT}/${COMPONENT}.properties"
-dub template "/etc/confluent/docker/log4j.properties.template" "/etc/${COMPONENT}/log4j.properties"
-dub template "/etc/confluent/docker/tools-log4j.properties.template" "/etc/${COMPONENT}/tools-log4j.properties"
+echo "===> Writing kafka.properties ..."
+dub template "/opt/kafka/tools/templates/kafka.properties.template" "/opt/kafka/config/kafka.properties"
+
+echo "===> Writing log4j.properties ..."
+dub template "/opt/kafka/tools/templates/log4j.properties.template" "/opt/kafka/config/log4j.properties"
+
+echo "===> Writing tools-log4j.properties ..."
+dub template "/opt/kafka/tools/templates/tools-log4j.properties.template" "/opt/kafka/config/tools-log4j.properties"
+
+export KAFKA_DATA_DIRS=${KAFKA_DATA_DIRS:-"/var/lib/kafka/data"}
+echo "===> Check if $KAFKA_DATA_DIRS is writable ..."
+dub path "$KAFKA_DATA_DIRS" writable
+
+echo "===> Check if Zookeeper is healthy ..."
+cub zk-ready "$KAFKA_ZOOKEEPER_CONNECT" "${KAFKA_CUB_ZK_TIMEOUT:-40}"
