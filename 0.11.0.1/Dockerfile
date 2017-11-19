@@ -24,7 +24,7 @@ RUN echo "===> Updating debian ....." && \
     wget -q "http://archive.apache.org/dist/kafka/${KAFKA_VERSION}/${KAFKA_DIST}.tgz" && \
     echo "===> Verifying kafka ..."  && \
     echo "${KAFKA_SHA256_SUM}" "${KAFKA_DIST}.tgz" | sha256sum -c - && \    
-    wget -q "http://www.apache.org/dist/kafka/${KAFKA_VERSION}/${KAFKA_DIST}.tgz.asc" && \
+    wget -q "http://archive.apache.org/dist/kafka/${KAFKA_VERSION}/${KAFKA_DIST}.tgz.asc" && \
     wget -q "http://kafka.apache.org/KEYS" && \
     export GNUPGHOME="$(mktemp -d)" && \
     gpg --import KEYS && \
