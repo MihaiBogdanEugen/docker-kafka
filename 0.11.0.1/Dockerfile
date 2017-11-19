@@ -21,10 +21,10 @@ RUN echo "===> Updating debian ....." && \
     pip install --no-cache-dir --upgrade pip==${PYTHON_PIP_VERSION} && \
     pip install --no-cache-dir jinja2 requests && \
     echo "===> Downloading kafka ..."  && \
-    wget -q "http://www.apache.org/dist/kafka/${KAFKA_VERSION}/${KAFKA_DIST}.tgz" && \
+    wget -q "http://archive.apache.org/dist/kafka/${KAFKA_VERSION}/${KAFKA_DIST}.tgz" && \
     echo "===> Verifying kafka ..."  && \
     echo "${KAFKA_SHA256_SUM}" "${KAFKA_DIST}.tgz" | sha256sum -c - && \    
-    wget -q "http://www.apache.org/dist/kafka/${KAFKA_VERSION}/${KAFKA_DIST}.tgz.asc" && \
+    wget -q "http://archive.apache.org/dist/kafka/${KAFKA_VERSION}/${KAFKA_DIST}.tgz.asc" && \
     wget -q "http://kafka.apache.org/KEYS" && \
     export GNUPGHOME="$(mktemp -d)" && \
     gpg --import KEYS && \
