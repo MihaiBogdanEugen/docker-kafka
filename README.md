@@ -7,7 +7,7 @@
 * ```0.11.0.1``` _\([0.11.0.1/Dockerfile]\)_
 [![](https://images.microbadger.com/badges/image/mbe1224/kafka:0.11.0.1.svg)](https://microbadger.com/images/mbe1224/kafka:0.11.0.1 "")
 * ```0.11.0.2``` _\([0.11.0.2/Dockerfile]\)_
-[![](https://images.microbadger.com/badges/image/mbe1224/kafka:0.11.0.2.svg)](https://microbadger.com/images/mbe1224/kafka:0.11.0.1 "")
+[![](https://images.microbadger.com/badges/image/mbe1224/kafka:0.11.0.2.svg)](https://microbadger.com/images/mbe1224/kafka:0.11.0.2 "")
 * ```1.0.0```, ```latest``` _\([1.0.0/Dockerfile]\)_
 [![](https://images.microbadger.com/badges/image/mbe1224/kafka:1.0.0.svg)](https://microbadger.com/images/mbe1224/kafka:1.0.0 "")
 
