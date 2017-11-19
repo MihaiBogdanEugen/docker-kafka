@@ -6,6 +6,8 @@
 [![](https://images.microbadger.com/badges/image/mbe1224/kafka:0.10.2.1.svg)](https://microbadger.com/images/mbe1224/kafka:0.10.2.1 "")
 * ```0.11.0.1``` _\([0.11.0.1/Dockerfile]\)_
 [![](https://images.microbadger.com/badges/image/mbe1224/kafka:0.11.0.1.svg)](https://microbadger.com/images/mbe1224/kafka:0.11.0.1 "")
+* ```0.11.0.2``` _\([0.11.0.2/Dockerfile]\)_
+[![](https://images.microbadger.com/badges/image/mbe1224/kafka:0.11.0.2.svg)](https://microbadger.com/images/mbe1224/kafka:0.11.0.1 "")
 * ```1.0.0```, ```latest``` _\([1.0.0/Dockerfile]\)_
 [![](https://images.microbadger.com/badges/image/mbe1224/kafka:1.0.0.svg)](https://microbadger.com/images/mbe1224/kafka:1.0.0 "")
 
@@ -43,9 +45,9 @@ One can configure a Kafka instance using environment variables. All [Configurati
 - upper caps
 - "." replaced with "\_"
 - snake case instead of pascal case
-- "ZOOKEEPER\_" prefix
+- "KAFKA\_" prefix
 
-For example, in order to limit the number of concurrent connections a single client may make to a single member of the ZooKeeper ensemble, one has to modifiy the "offsets.topic.replication.factor" property, which is translated in the "KAFKA\_OFFSETS\_TOPIC\_REPLICATION\_FACTOR" environment variable.
+For example, in order to set the replication factor for the offsets topic, one has to modifiy the "offsets.topic.replication.factor" property, which is translated in the "KAFKA\_OFFSETS\_TOPIC\_REPLICATION\_FACTOR" environment variable.
 
 ### Dual licensed under: ###
 
@@ -60,6 +62,7 @@ For example, in order to limit the number of concurrent connections a single cli
    [Topic-level Configs]: <https://kafka.apache.org/documentation/#topic-config>
    [0.10.2.1/Dockerfile]: <https://github.com/MihaiBogdanEugen/docker-kafka/blob/master/0.10.2.1/Dockerfile>
    [0.11.0.1/Dockerfile]: <https://github.com/MihaiBogdanEugen/docker-kafka/blob/master/0.11.0.1/Dockerfile>
+   [0.11.0.2/Dockerfile]: <https://github.com/MihaiBogdanEugen/docker-kafka/blob/master/0.11.0.2/Dockerfile>
    [1.0.0/Dockerfile]: <https://github.com/MihaiBogdanEugen/docker-kafka/blob/master/1.0.0/Dockerfile>
    [MIT License]: <https://raw.githubusercontent.com/MihaiBogdanEugen/docker-kafka/master/LICENSE>
    [Oracle Binary Code License Agreement]: <https://raw.githubusercontent.com/MihaiBogdanEugen/docker-kafka/master/Oracle_Binary_Code_License_Agreement%20for%20the%20Java%20SE%20Platform_Products_and_JavaFX>
