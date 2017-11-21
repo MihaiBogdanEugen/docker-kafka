@@ -2,7 +2,7 @@ FROM mbe1224/debian-oracle-java:stretch-slim-jdk8
 
 ENV LANG="C.UTF-8" \
     KAFKA_LOG_DIRS="/var/lib/kafka/data" \
-    KFKA_HOME="/opt/kafka"
+    KAFKA_HOME="/opt/kafka"
 
 ARG PYTHON_VERSION=2.7.13-2
 ARG PYTHON_PIP_VERSION=9.0.1
