@@ -8,6 +8,12 @@ set -o nounset \
 dub ensure KAFKA_ZOOKEEPER_CONNECT
 dub ensure KAFKA_ADVERTISED_LISTENERS
 
+if [[ -n "${IS_KUBERNETES-}" ]]
+then
+  export KAFKA_BROKER_ID="${HOSTNAME##*-}"
+  export KAFKA_ADVERTISED_LISTENERS="${KAFKA_ADVERTISED_LISTENERS/localhost/$HOSTNAME}"
+fi
+
 # By default, LISTENERS is derived from ADVERTISED_LISTENERS by replacing
 # hosts with 0.0.0.0. This is good default as it ensures that the broker
 # process listens on all ports.
@@ -78,11 +84,6 @@ then
   dub path "$KAFKA_SSL_TRUSTSTORE_CREDENTIALS_LOCATION" exists
   export KAFKA_SSL_TRUSTSTORE_PASSWORD
   KAFKA_SSL_TRUSTSTORE_PASSWORD=$(cat "$KAFKA_SSL_TRUSTSTORE_CREDENTIALS_LOCATION")
-fi
-
-if [[ -n "${IS_KUBERNETES-}" ]]
-then
-  export KAFKA_BROKER_ID="${HOSTNAME##*-}"
 fi
 
 # Set if KAFKA_ADVERTISED_LISTENERS has SASL_PLAINTEXT:// or SASL_SSL:// endpoints.
