@@ -1,5 +1,4 @@
-{% set excluded_props = ['KAFKA_ADVERTISED_PROTOCOL',
-                         'KAFKA_VERSION',
+{% set excluded_props = ['KAFKA_VERSION',
                          'KAFKA_HEAP_OPTS'
                          'KAFKA_LOG4J_OPTS',
                          'KAFKA_OPTS',

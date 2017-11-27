@@ -8,21 +8,20 @@ set -o nounset \
 if [[ -n "${IS_KUBERNETES-}" ]]
 then
   export KAFKA_BROKER_ID="${HOSTNAME##*-}"
-  export KAFKA_ADVERTISED_LISTENERS="${KAFKA_ADVERTISED_PROTOCOL-}://${HOSTNAME-}.${KUBERNETES_SERVICE_NAME-}:${KAFKA_ADVERTISED_PORT-}"
+else 
+  dub ensure KAFKA_ADVERTISED_LISTENERS
+  # By default, LISTENERS is derived from ADVERTISED_LISTENERS by replacing
+  # hosts with 0.0.0.0. This is good default as it ensures that the broker
+  # process listens on all ports.
+  if [[ -z "${KAFKA_LISTENERS-}" ]]
+  then
+    export KAFKA_LISTENERS
+    KAFKA_LISTENERS=$(cub listeners "$KAFKA_ADVERTISED_LISTENERS")
+  fi
 fi
 
 dub ensure KAFKA_BROKER_ID
 dub ensure KAFKA_ZOOKEEPER_CONNECT
-dub ensure KAFKA_ADVERTISED_LISTENERS
-
-# By default, LISTENERS is derived from ADVERTISED_LISTENERS by replacing
-# hosts with 0.0.0.0. This is good default as it ensures that the broker
-# process listens on all ports.
-if [[ -z "${KAFKA_LISTENERS-}" ]]
-then
-  export KAFKA_LISTENERS
-  KAFKA_LISTENERS=$(cub listeners "$KAFKA_ADVERTISED_LISTENERS")
-fi
 
 if [[ -z "${KAFKA_LOG_DIRS-}" ]]
 then
@@ -33,13 +32,8 @@ fi
 # advertised.host, advertised.port, host and port are deprecated. Exit if these properties are set.
 if [[ -n "${KAFKA_ADVERTISED_PORT-}" ]]
 then
-  if [[ -n "${IS_KUBERNETES-}" ]]
-  then
-    echo "Kubernetes setup"
-  else
     echo "advertised.port is deprecated. Please use KAFKA_ADVERTISED_LISTENERS instead."
     exit 1
-  fi
 fi
 
 if [[ -n "${KAFKA_ADVERTISED_HOST-}" ]]
@@ -60,8 +54,8 @@ then
   exit 1
 fi
 
-# Set if ADVERTISED_LISTENERS has SSL:// or SASL_SSL:// endpoints.
-if [[ $KAFKA_ADVERTISED_LISTENERS == *"SSL://"* ]]
+# Set if KAFKA_LISTENERS has SSL:// or SASL_SSL:// endpoints.
+if [[ $KAFKA_LISTENERS == *"SSL://"* ]]
 then
   echo "SSL is enabled."
 
@@ -92,8 +86,8 @@ then
   KAFKA_SSL_TRUSTSTORE_PASSWORD=$(cat "$KAFKA_SSL_TRUSTSTORE_CREDENTIALS_LOCATION")
 fi
 
-# Set if KAFKA_ADVERTISED_LISTENERS has SASL_PLAINTEXT:// or SASL_SSL:// endpoints.
-if [[ $KAFKA_ADVERTISED_LISTENERS =~ .*SASL_.*://.* ]]
+# Set if KAFKA_LISTENERS has SASL_PLAINTEXT:// or SASL_SSL:// endpoints.
+if [[ $KAFKA_LISTENERS =~ .*SASL_.*://.* ]]
 then
   echo "SASL" is enabled.
 
