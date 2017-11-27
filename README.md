@@ -49,6 +49,12 @@ One can configure a Kafka instance using environment variables. All [Configurati
 
 For example, in order to set the replication factor for the offsets topic, one has to modifiy the "offsets.topic.replication.factor" property, which is translated in the "KAFKA\_OFFSETS\_TOPIC\_REPLICATION\_FACTOR" environment variable.
 
+#### Kubernetes: ####
+
+For Kubernetes deployments using StatefulSets (or other replication objects), KAFKA\_BROKER\_ID can't be set up in advance. Therefore, one needs to set the IS\_KUBERNETES environemnt variable to a non-null value. In this scenario, ZooKeeper's ID (myid) will be generated using the value of the HOSTNAME environment variable. The KAFKA\_BROKER\_ID value will be ignored, but it still needs to be set up.
+
+Nevertheless, if one uses Pods, than the usual setup can be used and the IS\_KUBERNETES environemnt variable must be ignored.
+
 ### Dual licensed under: ###
 
 * [MIT License]
