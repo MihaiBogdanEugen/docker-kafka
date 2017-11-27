@@ -5,14 +5,16 @@ set -o nounset \
     -o verbose \
     -o xtrace
 
-dub ensure KAFKA_ZOOKEEPER_CONNECT
-dub ensure KAFKA_ADVERTISED_LISTENERS
-
 if [[ -n "${IS_KUBERNETES-}" ]]
 then
   export KAFKA_BROKER_ID="${HOSTNAME##*-}"
   export KAFKA_ADVERTISED_LISTENERS="PLAINTEXT://${HOSTNAME-}:${KAFKA_PORT-}"
+
 fi
+
+dub ensure KAFKA_BROKER_ID
+dub ensure KAFKA_ZOOKEEPER_CONNECT
+dub ensure KAFKA_ADVERTISED_LISTENERS
 
 # By default, LISTENERS is derived from ADVERTISED_LISTENERS by replacing
 # hosts with 0.0.0.0. This is good default as it ensures that the broker
