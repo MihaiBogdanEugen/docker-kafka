@@ -35,7 +35,7 @@ if [[ -n "${KAFKA_ADVERTISED_PORT-}" ]]
 then
   if [[ -n "${IS_KUBERNETES-}" ]]
   then
-    # must be K8S setup
+    echo "Kubernetes setup"
   else
     echo "advertised.port is deprecated. Please use KAFKA_ADVERTISED_LISTENERS instead."
     exit 1
