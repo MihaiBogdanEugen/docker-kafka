@@ -8,8 +8,7 @@ set -o nounset \
 if [[ -n "${IS_KUBERNETES-}" ]]
 then
   export KAFKA_BROKER_ID="${HOSTNAME##*-}"
-  export KAFKA_ADVERTISED_LISTENERS="PLAINTEXT://${HOSTNAME-}:${KAFKA_PORT-}"
-
+  export KAFKA_ADVERTISED_LISTENERS="${KAFKA_ADVERTISED_PROTOCOL-}://${HOSTNAME-}:${KAFKA_ADVERTISED_PORT-}"
 fi
 
 dub ensure KAFKA_BROKER_ID
@@ -34,8 +33,13 @@ fi
 # advertised.host, advertised.port, host and port are deprecated. Exit if these properties are set.
 if [[ -n "${KAFKA_ADVERTISED_PORT-}" ]]
 then
-  echo "advertised.port is deprecated. Please use KAFKA_ADVERTISED_LISTENERS instead."
-  exit 1
+  if [[ -n "${IS_KUBERNETES-}" ]]
+  then
+    # must be K8S setup
+  else
+    echo "advertised.port is deprecated. Please use KAFKA_ADVERTISED_LISTENERS instead."
+    exit 1
+  fi
 fi
 
 if [[ -n "${KAFKA_ADVERTISED_HOST-}" ]]
